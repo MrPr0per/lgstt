@@ -1,6 +1,6 @@
 //! Временной отрезок - основная единица трекинга времени
 
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Local};
 use serde::{Deserialize, Serialize};
 
 use super::activity_instance::ActivityInstance;
@@ -8,15 +8,15 @@ use super::activity_instance::ActivityInstance;
 /// Начатый временной отрезок
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct StartedSegment {
-    pub started_at: DateTime<Utc>,
+    pub started_at: DateTime<Local>,
     pub plan: ActivityInstance,
 }
 
 /// Завершённый временной отрезок
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CompletedSegment {
-    pub started_at: DateTime<Utc>,
-    pub ended_at: DateTime<Utc>,
+    pub started_at: DateTime<Local>,
+    pub ended_at: DateTime<Local>,
     pub plan: Option<ActivityInstance>,
     pub facts: Vec<ActivityInstance>,
 }
@@ -29,13 +29,13 @@ pub enum TimeSegment {
 }
 
 impl TimeSegment {
-    pub fn new_started(started_at: DateTime<Utc>, plan: ActivityInstance) -> Self {
+    pub fn new_started(started_at: DateTime<Local>, plan: ActivityInstance) -> Self {
         Self::Started(StartedSegment { started_at, plan })
     }
 
     pub fn new_completed(
-        started_at: DateTime<Utc>,
-        ended_at: DateTime<Utc>,
+        started_at: DateTime<Local>,
+        ended_at: DateTime<Local>,
         plan: Option<ActivityInstance>,
         facts: Vec<ActivityInstance>,
     ) -> Self {
