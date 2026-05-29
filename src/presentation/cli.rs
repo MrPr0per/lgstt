@@ -1,13 +1,12 @@
-//! CLI интерфейс для ввода событий
-
+use crate::domain::RawEntry;
+use crate::domain::app_settings::Settings;
+use crate::infrastructure::{FileRepoOfAppSettings, FileRepoOfRawEntries};
 use colored::Colorize;
-use crate::domain::settings::AppSettings;
-use crate::infrastructure::{FileRawEntryRepository, RawEntry};
 use std::io;
 use std::path::PathBuf;
 
 /// Запросить настройки у пользователя (если их нет)
-pub fn ask_for_settings() -> AppSettings {
+pub fn ask_for_settings() -> Settings {
     println!("Enter the path to the project (empty string = current directory)");
     let mut path_string = String::new();
     io::stdin()
@@ -17,13 +16,12 @@ pub fn ask_for_settings() -> AppSettings {
     if path_string.is_empty() {
         path_string = ".".to_string();
     }
-    AppSettings {
+    Settings {
         events_file_path: PathBuf::from(&path_string).join("events.jsons"),
     }
 }
 
-/// Запуск основного цикла CLI
-pub fn run_mainloop(repository: &FileRawEntryRepository) {
+pub fn run_mainloop(repository: &FileRepoOfRawEntries) {
     let stdin = io::stdin();
 
     println!("Enter events:");

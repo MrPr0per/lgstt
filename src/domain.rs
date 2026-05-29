@@ -1,19 +1,8 @@
-//! Domain Layer - ядро бизнес-логики
-//!
-//! Содержит несколько bounded contexts:
-//! - Time Tracking - трекинг времени (TimeSegment, ActivityType)
-//! - Settings - настройки приложения (AppSettings)
+// каждый модуль в domain - это bounded context
+pub mod app_settings;
+pub mod raw_entry;
+pub mod time_segments;
 
-// Time Tracking BC
-mod activity_type;
-mod activity_instance;
-mod time_segment;
-mod tag;
-
-// Settings BC
-pub mod settings;
-
-pub use activity_type::*;
-pub use activity_instance::*;
-pub use time_segment::*;
-pub use tag::*;
+pub(crate) use app_settings::Repo as RepoOfAppSettings;
+pub(crate) use app_settings::Settings as AppSettings;
+pub(crate) use raw_entry::RawEntry;

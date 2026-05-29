@@ -1,19 +1,7 @@
-//! Infrastructure Layer - работа с внешними системами (файлы, БД, API)
-//!
-//! Содержит:
-//! - RawEntry - сырые данные
-//! - FileRawEntryRepository - файловый репозиторий для сырых записей
-//! - SettingsStorage - хранилище настроек
-//! - FileRepositoryError, SettingsStorageError - ошибки
+// привязанные к контекстам штуки в соответсвующих модулях
 
-mod errors;
-mod raw_entry;
-mod raw_entry_repository;
-mod settings_errors;
-mod settings_storage;
+mod app_settings;
+mod raw_entries;
 
-pub use errors::FileRepositoryError;
-pub use raw_entry::RawEntry;
-pub use raw_entry_repository::FileRawEntryRepository;
-pub use settings_errors::SettingsStorageError;
-pub use settings_storage::SettingsStorage;
+pub(crate) use app_settings::FileRepo as FileRepoOfAppSettings;
+pub(crate) use raw_entries::FileRepo as FileRepoOfRawEntries;
