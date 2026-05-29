@@ -1,6 +1,6 @@
 use crate::domain::RawEntry;
 use crate::domain::app_settings::Settings;
-use crate::infrastructure::{FileRepoOfAppSettings, FileRepoOfRawEntries};
+use crate::infrastructure::{RepoOfRawEntriesAsFile};
 use colored::Colorize;
 use std::io;
 use std::path::PathBuf;
@@ -21,7 +21,7 @@ pub fn ask_for_settings() -> Settings {
     }
 }
 
-pub fn run_mainloop(repository: &FileRepoOfRawEntries) {
+pub fn run_mainloop(repository: &RepoOfRawEntriesAsFile) {
     let stdin = io::stdin();
 
     println!("Enter events:");

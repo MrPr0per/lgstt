@@ -3,11 +3,11 @@ mod infrastructure;
 mod presentation;
 
 use crate::domain::RepoOfAppSettings;
-use infrastructure::{FileRepoOfAppSettings, FileRepoOfRawEntries};
+use infrastructure::{RepoOfAppSettingsAsFile, RepoOfRawEntriesAsFile};
 
 fn main() {
     // Загрузка или создание настроек
-    let settings_repo = FileRepoOfAppSettings::new();
+    let settings_repo = RepoOfAppSettingsAsFile::new();
     let settings = match settings_repo.load() {
         Ok(Some(s)) => s,
         Ok(None) => {
@@ -23,7 +23,7 @@ fn main() {
     };
 
     // Создание репозитория
-    let repository = FileRepoOfRawEntries::new(settings.events_file_path);
+    let repository = RepoOfRawEntriesAsFile::new(settings.events_file_path);
 
     // Запуск основного цикла
     presentation::run_mainloop(&repository);
