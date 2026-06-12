@@ -1,4 +1,4 @@
-## lgstt - LoG and get STaTisics
+## lgstt - Log and Get STaTisics
 
 ##### Установка
 ```shell
