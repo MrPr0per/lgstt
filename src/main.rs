@@ -2,29 +2,17 @@ mod domain;
 mod infrastructure;
 mod presentation;
 
-use crate::domain::RepoOfAppSettings;
-use infrastructure::{RepoOfAppSettingsAsFile, RepoOfRawEntriesAsFile};
+use crate::infrastructure::ErrorOfFileRepoOfAppSettings;
+use crate::presentation::Cli;
+use crate::presentation::ErrorOfCli;
+use infrastructure::FileRepoOfAppSettings;
+use std::io::stdin;
 
-fn main() {
-    // Загрузка или создание настроек
-    let settings_repo = RepoOfAppSettingsAsFile::new();
-    let settings = match settings_repo.load() {
-        Ok(Some(s)) => s,
-        Ok(None) => {
-            let settings = presentation::ask_for_settings();
-            if let Err(e) = settings_repo.save(&settings) {
-                panic!("Failed to save settings: {}", e);
-            }
-            settings
-        }
-        Err(e) => {
-            panic!("Failed to load settings: {}", e);
-        }
+fn main() -> Result<(), ErrorOfCli<ErrorOfFileRepoOfAppSettings>> {
+    let repo_of_app_settings = FileRepoOfAppSettings::new();
+    let cli = Cli {
+        repo_of_app_settings: Box::new(repo_of_app_settings),
+        stdin: stdin(),
     };
-
-    // Создание репозитория
-    let repository = RepoOfRawEntriesAsFile::new(settings.events_file_path);
-
-    // Запуск основного цикла
-    presentation::run_mainloop(&repository);
+    cli.run_mainloop()
 }

@@ -7,10 +7,10 @@ use super::tag::Tag;
 
 /// Идентификатор типа деятельности
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
-pub struct ActivityTypeId(Uuid);
+pub(crate) struct ActivityTypeId(Uuid);
 
 impl ActivityTypeId {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         Self(Uuid::now_v7())
     }
 }
@@ -29,15 +29,15 @@ impl std::fmt::Display for ActivityTypeId {
 
 /// Тип деятельности - классификатор для группировки занятий
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct ActivityType {
-    pub id: ActivityTypeId,
-    pub canonical_name: String,
-    pub aliases: Vec<String>,
-    pub tags: Vec<Tag>,
+pub(crate) struct ActivityType {
+    pub(crate) id: ActivityTypeId,
+    pub(crate) canonical_name: String,
+    pub(crate) aliases: Vec<String>,
+    pub(crate) tags: Vec<Tag>,
 }
 
 impl ActivityType {
-    pub fn new(canonical_name: String) -> Self {
+    pub(crate) fn new(canonical_name: String) -> Self {
         Self {
             id: ActivityTypeId::new(),
             canonical_name,
@@ -47,7 +47,7 @@ impl ActivityType {
     }
 
     /// Проверить, соответствует ли строка этому типу (по canonical_name или alias)
-    pub fn matches(&self, input: &str) -> bool {
+    pub(crate) fn matches(&self, input: &str) -> bool {
         let input_lower = input.to_lowercase();
         self.canonical_name.to_lowercase() == input_lower
             || self.aliases.iter().any(|a| a.to_lowercase() == input_lower)

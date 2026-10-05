@@ -1,52 +1,61 @@
-use crate::domain::RawEntry;
-use crate::domain::app_settings::Settings;
-use crate::infrastructure::{RepoOfRawEntriesAsFile};
+use crate::domain::RepoOfAppSettings;
+use crate::domain::app_settings::AppSettings;
 use colored::Colorize;
+use std::fmt::{Debug, Display};
 use std::io;
+use std::io::{BufRead, Stdin};
 use std::path::PathBuf;
 
-/// Запросить настройки у пользователя (если их нет)
-pub fn ask_for_settings() -> Settings {
-    println!("Enter the path to the project (empty string = current directory)");
-    let mut path_string = String::new();
-    io::stdin()
-        .read_line(&mut path_string)
-        .expect("Failed to read string");
-    path_string = path_string.trim().to_string();
-    if path_string.is_empty() {
-        path_string = ".".to_string();
-    }
-    Settings {
-        events_file_path: PathBuf::from(&path_string).join("events.jsons"),
-    }
+pub(crate) struct Cli<RepoOfAppSettingsError> {
+    pub(crate) repo_of_app_settings: Box<dyn RepoOfAppSettings<RepoOfAppSettingsError>>,
+    pub(crate) stdin: Stdin,
 }
 
-pub fn run_mainloop(repository: &RepoOfRawEntriesAsFile) {
-    let stdin = io::stdin();
+#[derive(Debug, thiserror::Error)]
+pub(crate) enum ErrorOfCli<RepoOfAppSettingsError> {
+    #[error(transparent)]
+    Io(#[from] io::Error),
+    #[error(transparent)]
+    Repo(RepoOfAppSettingsError),
+}
 
-    println!("Enter events:");
-    for line in stdin.lines() {
-        let line = line.expect("Failed to read string");
+impl<RepoOfAppSettingsError> Cli<RepoOfAppSettingsError>
+where
+    RepoOfAppSettingsError: Debug + Display,
+{
+    pub(crate) fn run_mainloop(&self) -> Result<(), ErrorOfCli<RepoOfAppSettingsError>> {
+        self.load_or_ask_settings()?;
 
-        // Создаём сырую запись
-        let entry = RawEntry::new(line.clone());
+        println!("Enter events:");
+        for line in self.stdin.lock().lines() {
+            let line = line?;
 
-        // Сохраняем
-        if let Err(e) = repository.save(&entry) {
-            eprintln!("Failed to save entry: {}", e);
-            continue;
+            todo!()
         }
+        Ok(())
+    }
 
-        // Выводим подтверждение
-        println!(
-            "{} {}",
-            entry
-                .timestamp
-                .format("%Y-%m-%d %H:%M:%S")
-                .to_string()
-                .as_str()
-                .green(),
-            entry.content
-        );
+    fn load_or_ask_settings(&self) -> Result<AppSettings, ErrorOfCli<RepoOfAppSettingsError>> {
+        let settings_or_not = self.repo_of_app_settings.load().map_err(ErrorOfCli::Repo)?;
+        let settings = match settings_or_not {
+            Some(s) => s,
+            None => {
+                let settings = self.ask_for_settings()?;
+                self.repo_of_app_settings
+                    .save(&settings)
+                    .map_err(ErrorOfCli::Repo)?;
+                settings
+            }
+        };
+        Ok(settings)
+    }
+
+    pub(crate) fn ask_for_settings(&self) -> io::Result<AppSettings> {
+        println!("Enter the path to the project:");
+        let mut path = String::new();
+        self.stdin.read_line(&mut path)?;
+        Ok(AppSettings {
+            logs_root: PathBuf::from(&path),
+        })
     }
 }

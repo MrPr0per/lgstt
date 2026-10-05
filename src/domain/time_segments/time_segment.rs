@@ -7,33 +7,33 @@ use super::activity_instance::ActivityInstance;
 
 /// Начатый временной отрезок
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct StartedSegment {
-    pub started_at: DateTime<Local>,
-    pub plan: ActivityInstance,
+pub(crate) struct StartedSegment {
+    pub(crate) started_at: DateTime<Local>,
+    pub(crate) plan: ActivityInstance,
 }
 
 /// Завершённый временной отрезок
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct CompletedSegment {
-    pub started_at: DateTime<Local>,
-    pub ended_at: DateTime<Local>,
-    pub plan: Option<ActivityInstance>,
-    pub facts: Vec<ActivityInstance>,
+pub(crate) struct CompletedSegment {
+    pub(crate) started_at: DateTime<Local>,
+    pub(crate) ended_at: DateTime<Local>,
+    pub(crate) plan: Option<ActivityInstance>,
+    pub(crate) facts: Vec<ActivityInstance>,
 }
 
 /// Временной отрезок - основная единица трекинга времени
 #[derive(Debug, Clone, Serialize, Deserialize)]
-pub enum TimeSegment {
+pub(crate) enum TimeSegment {
     Started(StartedSegment),
     Completed(CompletedSegment),
 }
 
 impl TimeSegment {
-    pub fn new_started(started_at: DateTime<Local>, plan: ActivityInstance) -> Self {
+    pub(crate) fn new_started(started_at: DateTime<Local>, plan: ActivityInstance) -> Self {
         Self::Started(StartedSegment { started_at, plan })
     }
 
-    pub fn new_completed(
+    pub(crate) fn new_completed(
         started_at: DateTime<Local>,
         ended_at: DateTime<Local>,
         plan: Option<ActivityInstance>,
