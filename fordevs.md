@@ -7,3 +7,5 @@
 	- ddd
 	- `src/main.rs` - точка сборки
 	- домен и инфра разделены по bounded contexts
+- как запустить полуавтоматические тесты
+    - `cargo test manual_chart -- --ignored --nocapture`
