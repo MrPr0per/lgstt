@@ -23,7 +23,7 @@ impl FileRepoOfAppSettings {
     fn default_path() -> PathBuf {
         let proj_dirs = ProjectDirs::from("", "", env!("CARGO_PKG_NAME"))
             .expect("Cannot determine config directory");
-        proj_dirs.config_dir().join("app_settings.toml")
+        proj_dirs.config_dir().join("app_settings.json")
     }
 }
 
