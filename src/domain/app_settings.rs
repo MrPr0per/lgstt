@@ -7,13 +7,13 @@ pub(crate) struct AppSettings {
     pub(crate) logs_root: PathBuf,
 }
 
-pub(crate) trait RepoOfAppSettings<E> {
-    fn save(&self, settings: &AppSettings) -> Result<(), E>;
+pub(crate) trait RepoOfAppSettings {
+    fn save(&self, settings: &AppSettings) -> anyhow::Result<()>;
 
     /// Загрузить настройки из файла
     ///
     /// Возвращает `None`, если файл не найден - это нормальная ситуация,
     /// когда пользователь ещё не настроил приложение.
-    fn load(&self) -> Result<Option<AppSettings>, E>;
-    fn delete(&self) -> Result<(), E>;
+    fn load(&self) -> anyhow::Result<Option<AppSettings>>;
+    fn delete(&self) -> anyhow::Result<()>;
 }
