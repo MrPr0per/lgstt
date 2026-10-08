@@ -12,7 +12,7 @@ pub(crate) trait ChartPlotter {
     fn plot(&self, points: Vec<DateTimePoint>) -> anyhow::Result<()>;
 }
 
-pub(crate) struct ConsoleChartPlotter {
+pub(crate) struct BarsPlotterByDays {
     pub fallback_width: usize,
     pub min_bar_width: usize,
     pub max_bar_width: usize,
@@ -20,7 +20,7 @@ pub(crate) struct ConsoleChartPlotter {
     pub bar_to_value_gap: usize,
 }
 
-impl Default for ConsoleChartPlotter {
+impl Default for BarsPlotterByDays {
     fn default() -> Self {
         Self {
             fallback_width: 80,
@@ -32,7 +32,7 @@ impl Default for ConsoleChartPlotter {
     }
 }
 
-impl ChartPlotter for ConsoleChartPlotter {
+impl ChartPlotter for BarsPlotterByDays {
     fn plot(&self, points: Vec<DateTimePoint>) -> anyhow::Result<()> {
         if points.is_empty() {
             println!("No points to display");
@@ -50,7 +50,7 @@ impl ChartPlotter for ConsoleChartPlotter {
     }
 }
 
-impl ConsoleChartPlotter {
+impl BarsPlotterByDays {
     fn layout_for(&self, rows: &[Row]) -> Layout {
         let label_w = rows.iter().map(|r| r.label.len()).max().unwrap_or(0);
         let value_w = rows.iter().map(|r| r.value.len()).max().unwrap_or(0);
@@ -330,7 +330,7 @@ mod manual_tests {
                 SCENARIOS.len(),
                 scenario.name
             );
-            ConsoleChartPlotter::default()
+            BarsPlotterByDays::default()
                 .plot(random_points(&mut rng, scenario))
                 .unwrap();
 
