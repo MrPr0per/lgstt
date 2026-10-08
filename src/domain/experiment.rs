@@ -1,7 +1,7 @@
 use chrono::{DateTime, Local};
 
 pub(crate) trait ExperimentsRunner {
-    fn register_experiments(&self, experiments: Vec<Box<dyn Experiment>>);
+    fn register_experiments(&mut self, experiments: Vec<Box<dyn Experiment>>);
     fn run(&self, prefix_of_name_of_experiment: &str, args: &str) -> anyhow::Result<()>;
 }
 
