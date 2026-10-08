@@ -1,7 +1,9 @@
 use crate::domain::experiment::{Experiment, RepoOfLogs};
 use crate::presentation::plots::{ChartPlotter, DateTimePoint};
 use anyhow::Context;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize)]
 pub(crate) struct PayloadOfWeightExperiment {
     weight: f32,
 }
@@ -9,6 +11,18 @@ pub(crate) struct PayloadOfWeightExperiment {
 pub(crate) struct WeightExperiment {
     repo: Box<dyn RepoOfLogs<PayloadOfWeightExperiment>>,
     chart_plotter: Box<dyn ChartPlotter>,
+}
+
+impl WeightExperiment {
+    pub(crate) fn new(
+        repo: Box<dyn RepoOfLogs<PayloadOfWeightExperiment>>,
+        chart_plotter: Box<dyn ChartPlotter>,
+    ) -> WeightExperiment {
+        WeightExperiment {
+            repo,
+            chart_plotter,
+        }
+    }
 }
 
 impl Experiment for WeightExperiment {
@@ -23,7 +37,7 @@ impl Experiment for WeightExperiment {
             .with_context(|| format!("Failed to parse weight from {args:?}"))?;
 
         self.repo
-            .save_to_end(PayloadOfWeightExperiment { weight })
+            .save_to_the_end(PayloadOfWeightExperiment { weight })
             .context("Failed to save weight log")?;
 
         let logs = self.repo.load().context("Failed to load weight logs")?;
